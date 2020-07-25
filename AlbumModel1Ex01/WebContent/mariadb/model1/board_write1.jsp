@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Insert title here</title>
+<title>앨범 게시판</title>
 <link rel="stylesheet" type="text/css" href="../../css/board_write.css">
 <script type="text/javascript">
 	window.onload = function() {
@@ -33,7 +33,7 @@
 				return false;
 			}
 			if (document.getElementById('file').value != ''){
-		    	// 정규식을 사용하여 jpg, png, gif 등 이미지 파일의 확장자를 가진것을 추려낸다.
+				//이미지 파일 확장자만 업로드 허용
 		    	var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp|JPG|JPEG|PNG|GIF|BMP)$/;
 		        if (!file.value.match(reg)) {
 		            alert("해당 파일은 이미지 파일이 아닙니다.");
@@ -62,7 +62,7 @@
 				<table>
 				<tr>
 					<th class="top">글쓴이</th>
-					<td class="top" colspan="3"><input type="text" name="writer" value="" class="board_write_input_100" maxlength="5" /></td>
+					<td class="top" colspan="3"><input type="text" name="writer" value="" class="board_write_input_100" maxlength="10" /></td>
 				</tr>
 				<tr>
 					<th>제목</th>

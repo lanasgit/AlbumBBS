@@ -38,15 +38,19 @@
 	StringBuffer strHtml = new StringBuffer();
 	for (CommentTO cto : lists) {
 		String Cwriter = cto.getWriter();
-		String Cpassword = cto.getPassword();
 		String Ccontent = cto.getContent();
 		String Cdate = cto.getCdate();
+		String Cseq = cto.getCseq();
 		
 		strHtml.append("<tr>");
 		strHtml.append("<td class='coment_re' width='20%'>");
 		strHtml.append("<strong>"+ Cwriter +"</strong> ("+ Cdate +")");
 		strHtml.append("<div class='coment_re_txt'>");
 		strHtml.append(Ccontent);
+		strHtml.append("<div class='align_right'> "); 
+		strHtml.append("<a href='javascript:void(0)'; onclick=\"location.href='./comment_modify1.jsp?cpage="+cpage+"&cseq="+Cseq+"&seq="+seq+"'\">수정</a>&nbsp;");
+		strHtml.append("<a href='javascript:void(0)'; onclick=\"location.href='./comment_delete1.jsp?cpage="+cpage+"&cseq="+Cseq+"&seq="+seq+"'\">삭제</a>&nbsp;");
+		strHtml.append("</div>");
 		strHtml.append("</div>");
 		strHtml.append("</td>");
 		strHtml.append("</tr>");
@@ -58,7 +62,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Insert title here</title>
+<title>앨범 게시판</title>
 <link rel="stylesheet" type="text/css" href="../../css/board_view.css">
 <script type="text/javascript">
 	window.onload = function() {

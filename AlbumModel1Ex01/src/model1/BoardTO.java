@@ -2,7 +2,6 @@ package model1;
 
 public class BoardTO {
 	
-	private int comment;
 	private String cpage;
 	private String seq;
 	private String subject;
@@ -16,16 +15,10 @@ public class BoardTO {
 	private int wgap;
 	private	String filename;
 	private long filesize;
-	private long cmt;
+	private int cmt;
 	private	String newFilename;
 	private long newFilesize;
 	
-	public int getComment() {
-		return comment;
-	}
-	public void setComment(int comment) {
-		this.comment = comment;
-	}
 	public String getCpage() {
 		return cpage;
 	}
@@ -104,10 +97,10 @@ public class BoardTO {
 	public void setFilesize(long filesize) {
 		this.filesize = filesize;
 	}
-	public long getCmt() {
+	public int getCmt() {
 		return cmt;
 	}
-	public void setCmt(long cmt) {
+	public void setCmt(int cmt) {
 		this.cmt = cmt;
 	}
 	public String getNewFilename() {

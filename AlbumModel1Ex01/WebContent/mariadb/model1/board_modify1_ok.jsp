@@ -9,7 +9,7 @@
 <%
 	request.setCharacterEncoding("utf-8");
 	
-	String uploadPath = "C:/JSP/jsp-workspace/AlbumModel1Ex01/WebContent/upload";
+	String uploadPath = "C:/Users/KIM/git/repository2/AlbumModel1Ex01/WebContent/upload";
 	int maxFileSize = 1024 * 1024 * 5; //5MB
 	String encType = "utf-8";
 	

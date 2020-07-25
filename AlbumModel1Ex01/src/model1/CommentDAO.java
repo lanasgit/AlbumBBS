@@ -76,7 +76,7 @@ public class CommentDAO {
 		try {
 			conn = this.dataSource.getConnection();
 			
-			String sql = "select writer, password, content, cdate from album_comment1 where seq=? order by seq desc";
+			String sql = "select cseq, writer, password, content, cdate from album_comment1 where seq=? order by seq desc";
 			pstmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			pstmt.setString(1, seq);
 			
@@ -87,6 +87,7 @@ public class CommentDAO {
 			
 			while (rs.next()) {
 				CommentTO to = new CommentTO();
+				to.setCseq(rs.getString("cseq"));
 				to.setWriter(rs.getString("writer"));
 				to.setPassword(rs.getString("password"));
 				to.setContent(rs.getString("content"));
@@ -102,6 +103,73 @@ public class CommentDAO {
 			if (conn != null) try {conn.close();} catch (SQLException e) {}
 		}		
 		return lists;
+	}
+	
+	public int commentModifyOk(CommentTO to) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		int flag=2;
+		
+		try {
+			conn = this.dataSource.getConnection();
+			
+			String sql = "update album_comment1 set content=? where cseq=? and password=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, to.getContent());
+			pstmt.setString(2, to.getCseq());
+			pstmt.setString(3, to.getPassword());
+			
+			int result = pstmt.executeUpdate();
+			
+			if (result == 0) {
+				flag = 1;
+			} else if (result == 1) {
+				flag = 0;
+			}
+		} catch (SQLException e) {
+			System.out.println("[에러] : " + e.getMessage());
+		} finally {
+			if (pstmt!=null) try {pstmt.close();} catch (SQLException e) {}
+			if (conn!=null) try {conn.close();} catch (SQLException e) {}
+		}
+		return flag;
+	}
+	
+	public int commentDeleteOk(CommentTO to){
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+	      
+		int flag = 2;
+	      
+		try {
+			conn = this.dataSource.getConnection();
+		      
+			String sql = "delete from album_comment1 where cseq=? and password=?";
+			pstmt = conn.prepareStatement(sql);
+		    pstmt.setString(1, to.getCseq());
+		    pstmt.setString(2, to.getPassword());
+		      
+		    int result = pstmt.executeUpdate();
+		    pstmt.close();
+		    
+		    if (result == 0) {
+		       flag = 1;
+		    } else if (result == 1) {
+		       flag = 0;
+		       
+		       sql ="update album_board1 set cmt=cmt-1 where seq=?";
+		       pstmt = conn.prepareStatement(sql);
+		       pstmt.setString(1, to.getSeq());
+		       pstmt.executeUpdate();
+		    } 
+		} catch (SQLException e) {
+			System.out.println("[에러] : " + e.getMessage());
+	    } finally {
+	    	if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
+	    	if (conn != null) try {conn.close();} catch (SQLException e) {}
+	    }		
+	    return flag;
 	}
 	
 }

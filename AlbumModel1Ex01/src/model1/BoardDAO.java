@@ -105,7 +105,7 @@ public class BoardDAO {
 				to.setHit(rs.getString("hit"));
 				to.setWgap(rs.getInt("wgap"));
 				to.setFilename(rs.getString("filename"));
-				to.setCmt(rs.getLong("cmt"));
+				to.setCmt(rs.getInt("cmt"));
 				
 				lists.add(to);
 			}
@@ -149,7 +149,7 @@ public class BoardDAO {
 				to.setHit(rs.getString("hit"));
 				to.setWgap(rs.getInt("wgap"));
 				to.setFilename(rs.getString("filename"));
-				to.setCmt(rs.getLong("cmt"));
+				to.setCmt(rs.getInt("cmt"));
 				
 				lists.add(to);
 			}
@@ -211,8 +211,9 @@ public class BoardDAO {
 		try {
 			conn = this.dataSource.getConnection();
 					
-			String sql = "select subject, writer, mail, content, filename, filesize from album_board1 where seq="+ to.getSeq();
+			String sql = "select subject, writer, mail, content, filename, filesize from album_board1 where seq=?";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, to.getSeq());
 			
 			rs = pstmt.executeQuery();
 			
@@ -287,7 +288,7 @@ public class BoardDAO {
 				//정상
 				flag = 0;	
 				if(to.getNewFilename() != null && filename != null) {
-					File file = new File("C:/JSP/jsp-workspace/AlbumModel1Ex01/WebContent/upload/" + filename);
+					File file = new File("C:/Users/KIM/git/repository2/AlbumModel1Ex01/WebContent/upload/" + filename);
 					file.delete();
 				}
 			}
@@ -363,7 +364,7 @@ public class BoardDAO {
 				flag = 0;		
 				
 				if (filename != null) {
-					File file = new File("C:/JSP/jsp-workspace/AlbumModel1Ex01/WebContent/upload/" + filename);
+					File file = new File("C:/Users/KIM/git/repository2/AlbumModel1Ex01/WebContent/upload/" + filename);
 					file.delete();
 				}
 			}
