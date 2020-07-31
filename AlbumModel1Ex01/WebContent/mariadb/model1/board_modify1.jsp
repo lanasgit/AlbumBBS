@@ -34,29 +34,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>앨범 게시판</title>
 <link rel="stylesheet" type="text/css" href="../../css/board_write.css">
-<script type="text/javascript">
-	window.onload = function() {
-		document.getElementById('mbtn').onclick = function() {
-			if (document.mfrm.subject.value.trim() == '') {
-				alert('제목을 입력하셔야 합니다.');
-				return false;
-			}
-			if (document.mfrm.password.value.trim() == '') {
-				alert('비밀번호를 입력하셔야 합니다.');
-				return false;
-			}
-			if (document.getElementById('file').value != ''){
-		    	//이미지 파일 확장자만 업로드 허용
-		    	var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp|JPG|JPEG|PNG|GIF|BMP)$/;
-		        if (!file.value.match(reg)) {
-		            alert("해당 파일은 이미지 파일이 아닙니다.");
-		            return false;
-		        }
-		    }
-			document.mfrm.submit();
-		};
-	};
-</script>
 </head>
 
 <body>
@@ -90,7 +67,7 @@
 				<tr>
 					<th>내용</th>
 					<td colspan="3">
-						<textarea name="content" class="board_editor_area"><%=content %></textarea>
+						<textarea name="content" id="content" class="board_editor_area"><%=content %></textarea>
 					</td>
 				</tr>
 				<tr>
@@ -121,6 +98,51 @@
 	</form>
 </div>
 <!-- 하단 디자인 -->
-
 </body>
+
+<script type="text/javascript" src="../../smart_editor/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+	window.onload = function() {
+		document.getElementById('wbtn').onclick = function() {
+			editor_object.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
+			if (document.wfrm.writer.value.trim() == '') {
+				alert('이름을 입력하셔야 합니다.');
+				return false;
+			}
+			if (document.wfrm.subject.value.trim() == '') {
+				alert('제목을 입력하셔야 합니다.');
+				return false;
+			}
+			if (document.wfrm.password.value.trim() == '') {
+				alert('비밀번호를 입력하셔야 합니다.');
+				return false;
+			}
+			if (document.wfrm.info.checked == false) {
+				alert('동의를 하셔야 합니다.');
+				return false;
+			}
+			if (document.getElementById('file').value != '') {
+				//이미지 파일 확장자만 업로드 허용
+			   	var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp|JPG|JPEG|PNG|GIF|BMP)$/;
+			       if (!file.value.match(reg)) {
+			           alert("해당 파일은 이미지 파일이 아닙니다.");
+			           return false;
+			       }
+			}
+			document.wfrm.submit();
+   		};
+	};
+	var editor_object = []; 
+	nhn.husky.EZCreator.createInIFrame ({ 
+		oAppRef : editor_object, 
+		elPlaceHolder: "content", 
+   		sSkinURI: "../../smart_editor/SmartEditor2Skin.html", 
+  		fCreator : "createSEditor2",
+   		htParams : {  
+   			bUseToolbar : true,  
+      		bUseVerticalResizer : true,  
+      		bUseModeChanger : true, 
+   		} 
+	});
+</script>
 </html>
