@@ -28,7 +28,7 @@
 
 ![메인화면](https://user-images.githubusercontent.com/66877863/90771004-a1742b80-e32d-11ea-9f6a-4ec7c0c09f03.PNG)
 
-<div>2.쓰기화면</div>
+<div>2.화면</div>
 
 ![쓰기](https://user-images.githubusercontent.com/66877863/90771000-9faa6800-e32d-11ea-8f68-803b01f0b75a.PNG)
 
