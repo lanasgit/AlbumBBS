@@ -26,9 +26,7 @@ public class BoardDAO {
 		}
 	}
 	
-	public void boardWrite() {
-		
-	}
+	public void boardWrite() {}
 	
 	public int boardWriteOk(BoardTO to) {
 		Connection conn = null;

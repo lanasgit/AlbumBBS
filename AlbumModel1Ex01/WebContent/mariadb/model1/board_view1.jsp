@@ -4,7 +4,6 @@
 <%@ page import="model1.BoardTO" %>
 <%@ page import="model1.CommentDAO" %>
 <%@ page import="model1.CommentTO" %>
-<%@ page import="model1.CommentListTO" %>
 
 <%@ page import="java.util.ArrayList" %>
 <%
@@ -27,34 +26,6 @@
 	String hit = to.getHit();
 	String content = to.getContent();
 	String filename = to.getFilename();
-	
-	CommentListTO listTO = new CommentListTO();
-	listTO.setSeq(seq);
-	
-	CommentDAO cdao = new CommentDAO();
-	ArrayList<CommentTO> lists = cdao.CommentList(seq);
-	
-	//DB 댓글 불러오기
-	StringBuffer strHtml = new StringBuffer();
-	for (CommentTO cto : lists) {
-		String Cwriter = cto.getWriter();
-		String Ccontent = cto.getContent();
-		String Cdate = cto.getCdate();
-		String Cseq = cto.getCseq();
-		
-		strHtml.append("<tr>");
-		strHtml.append("<td class='coment_re' width='20%'>");
-		strHtml.append("<strong>"+ Cwriter +"</strong> ("+ Cdate +")");
-		strHtml.append("<div class='coment_re_txt'>");
-		strHtml.append(Ccontent);
-		strHtml.append("<div class='align_right'> "); 
-		strHtml.append("<a href='javascript:void(0)'; onclick=\"location.href='./comment_modify1.jsp?cpage="+cpage+"&cseq="+Cseq+"&seq="+seq+"'\">수정</a>&nbsp;");
-		strHtml.append("<a href='javascript:void(0)'; onclick=\"location.href='./comment_delete1.jsp?cpage="+cpage+"&cseq="+Cseq+"&seq="+seq+"'\">삭제</a>&nbsp;");
-		strHtml.append("</div>");
-		strHtml.append("</div>");
-		strHtml.append("</td>");
-		strHtml.append("</tr>");
-	}
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -66,6 +37,7 @@
 <link rel="stylesheet" type="text/css" href="../../css/board_view.css">
 <script type="text/javascript">
 	window.onload = function() {
+		readServer();
 		document.getElementById('cbtn').onclick = function() {
 			if (document.cfrm.cwriter.value.trim() == '') {
 				alert('이름을 입력하셔야 합니다.');
@@ -79,9 +51,78 @@
 				alert('내용을 입력하셔야 합니다.');
 				return false;
 			}
-			document.cfrm.submit();
+			writeServer(
+				document.cfrm.cwriter.value.trim(),
+				document.cfrm.cpassword.value.trim(),
+				document.cfrm.ccontent.value.trim()
+			);
 		};
-	};
+		
+		var writeServer = function(cwriter, cpassword, ccontent) {
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if (request.readyState == 4) {
+					if (request.status == 200) {
+						var data = request.responseText.trim();
+						var json = eval('(' + data + ')');
+						if (json.flag == 0) {
+							alert("댓글이 작성되었습니다");
+							readServer();
+							document.cfrm.cwriter.value ="";
+							document.cfrm.cpassword.value ="";
+							document.cfrm.ccontent.value ="";
+						} else {
+							alert("[오류] 댓글 작성 실패")
+						}
+					} else {
+						alert('페이지 처리 에러');
+					}
+				}
+			}
+			var url = './data/comment_write1_ok_json.jsp?seq= <%=seq %>';
+			url += '&cwriter=' + encodeURIComponent(cwriter) 
+			url += '&cpassword=' + cpassword
+			url += '&ccontent=' + encodeURIComponent(ccontent)
+			request.open('get', url, true);
+			request.send();
+		}
+	}
+	var readServer = function() {
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if (request.readyState == 4) {
+				if (request.status == 200) {
+					showData(request.responseText.trim());
+				} else {
+					alert('페이지 처리 에러');
+				}
+			}
+		}
+		request.open('get', './data/comment_list1_json.jsp?seq= <%=seq %>', true);
+		request.send();
+		
+		var showData = function(data) {
+			var json = eval('(' + data + ')');
+			var result = '<table>';
+			for (var i = 0; i < json.length; i++) {
+				result += '<tr>';
+				result += '<td class="coment_re" width="20%">';
+				result += '<strong>'+ json[i].Cwriter +'</strong> ('+ json[i].Cdate +')';
+				result += '<div class="coment_re_txt">';
+				result += json[i].Ccontent;
+				result += '<div class="align_right">'; 
+				result += '<a href="javascript:void(0)"; onclick="location.href=\'./comment_modify1.jsp?cpage='+<%=cpage %>+'&cseq='+json[i].Cseq+'&seq='+<%=seq %>+'\'">수정</a>&nbsp;';
+				result += '<a href="javascript:void(0)"; onclick="location.href=\'./comment_delete1.jsp?cpage='+<%=cpage %>+'&cseq='+json[i].Cseq+'&seq='+<%=seq %>+'\'">삭제</a>&nbsp;';
+				result += '</div>';
+				result += '</div>';
+				result += '</td>';
+				result += '</tr>';
+			}
+			result += '</table>';
+			
+			document.getElementById('result').innerHTML = result;
+		}
+	}
 </script>
 </head>
 
@@ -122,29 +163,25 @@
 			</tr>			
 			</table>
 			
-			<table>
-<%=strHtml %>
-			</table>
+			<div id="result"></div>
 
-			<form action="./comment_write1_ok.jsp" method="post" name="cfrm">
-			<input type="hidden" name="seq" value="<%=seq %>" />
-			<input type="hidden" name="cpage" value="<%=cpage %>" />
+			<form action="" method="post" name="cfrm">
 			<table>
-			<tr>
-				<td width="94%" class="coment_re">
-					글쓴이 <input type="text" name="cwriter" maxlength="10" class="coment_input" />&nbsp;&nbsp;
-					비밀번호 <input type="password" name="cpassword" class="coment_input pR10" />&nbsp;&nbsp;
-				</td>
-				<td width="6%" class="bg01"></td>
-			</tr>
-			<tr>
-				<td class="bg01">
-					<textarea name="ccontent" cols="" rows="" class="coment_input_text"></textarea>
-				</td>
-				<td align="right" class="bg01">
-					<input type="button" id="cbtn" value="댓글등록" class="btn_re btn_txt01" />
-				</td>
-			</tr>
+				<tr>
+					<td width="94%" class="coment_re">
+						글쓴이 <input type="text" name="cwriter" maxlength="10" class="coment_input" />&nbsp;&nbsp;
+						비밀번호 <input type="password" name="cpassword" class="coment_input pR10" />&nbsp;&nbsp;
+					</td>
+					<td width="6%" class="bg01"></td>
+				</tr>
+				<tr>
+					<td class="bg01">
+						<textarea name="ccontent" cols="" rows="" class="coment_input_text"></textarea>
+					</td>
+					<td align="right" class="bg01">
+						<input type="button" id="cbtn" value="댓글등록" class="btn_write btn_txt01" style="cursor: pointer;"/>
+					</td>
+				</tr>
 			</table>
 			</form>
 		</div>

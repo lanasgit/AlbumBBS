@@ -40,13 +40,6 @@ public class CommentDAO {
 			pstmt.executeUpdate();
 			pstmt.close();
 			
-			//해당 게시글 댓글 개수(cmt) 1 증가
-			sql ="update album_board1 set cmt=cmt+1 where seq=?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, cto.getSeq());
-			pstmt.executeUpdate();
-			pstmt.close();
-			
 			sql = "insert into album_comment1 values (0, ?, ?, ?, ?, now())";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, cto.getSeq());
@@ -56,6 +49,13 @@ public class CommentDAO {
 			
 			int result = pstmt.executeUpdate();
 			if (result == 1) {
+				//해당 게시글 댓글 개수(cmt) 1 증가
+				sql ="update album_board1 set cmt=cmt+1 where seq=?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, cto.getSeq());
+				pstmt.executeUpdate();
+				pstmt.close();
+				
 				flag = 0;
 			} 
 		} catch (SQLException e) {
@@ -76,20 +76,16 @@ public class CommentDAO {
 		try {
 			conn = this.dataSource.getConnection();
 			
-			String sql = "select cseq, writer, password, content, cdate from album_comment1 where seq=? order by seq desc";
-			pstmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			String sql = "select cseq, writer, password, content, cdate from album_comment1 where seq=?";
+			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, seq);
 			
 			rs = pstmt.executeQuery();
-			
-			rs.last();
-			rs.beforeFirst();
 			
 			while (rs.next()) {
 				CommentTO to = new CommentTO();
 				to.setCseq(rs.getString("cseq"));
 				to.setWriter(rs.getString("writer"));
-				to.setPassword(rs.getString("password"));
 				to.setContent(rs.getString("content"));
 				to.setCdate(rs.getString("cdate"));
 				
